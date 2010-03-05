@@ -55,17 +55,22 @@ class NicoCrawl
     #  agent.get(@links[i]["watch_url"])
     #end
 
-    t1 = Thread.new do 
-      agent.get(@links[i]["watch_url"])
-      puts "Thread : #{i} - t1"
-      sleep 3
-      puts "Download now #{@links[i]["title"]}"
-      movie_file = get_url(@links[i]["sm_url"],agent)
-      file = agent.get(movie_file)
-      type = movie_file.include?("v=") ? ".flv":".mp4"  
-      file.save_as("./DL/" + @links[i]["title"] + type)
-      puts "DL #{@links[i]["title"]} done"
+    t1 = Thread.new do  
+      begin
 
+        agent.get(@links[i]["watch_url"])
+        puts "Thread : #{i} - t1"
+        sleep 3
+        puts "Download now #{@links[i]["title"]}"
+        movie_file = get_url(@links[i]["sm_url"],agent)
+        file = agent.get(movie_file)
+        type = movie_file.include?("v=") ? ".flv":".mp4"  
+        file.save_as("./DL/" + @links[i]["title"] + type)
+        puts "DL #{@links[i]["title"]} done"
+      rescue
+        sleep 10
+        retry
+      end
     end
 
     t1.join
