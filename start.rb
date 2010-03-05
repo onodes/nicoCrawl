@@ -16,8 +16,8 @@ class NicoCrawl
   def login
     page = @@agent.get("https://secure.nicovideo.jp/secure/login_form")
     login_form = page.forms.first
-    login_form.fields[1].value = "onodes@gmail.com"
-    login_form.fields[2].value = "vipofvip"
+    login_form.fields[1].value = @@id
+    login_form.fields[2].value = @@pass 
     redirect_page = @@agent.submit(login_form)
     # @agent.cookies
     puts "LOGIN OK"
@@ -68,8 +68,8 @@ class NicoCrawl
         file.save_as("./DL/" + @links[i]["title"] + type)
         puts "DL #{@links[i]["title"]} done"
       rescue
+        puts "Access Error in thread:#{i}"
         sleep 10
-        retry
       end
     end
 
