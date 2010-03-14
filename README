@@ -8,5 +8,10 @@ you need Pit,Mechanize,pp
 Pit -> http://d.hatena.ne.jp/onodes/ ->Pit
 
 
-Use this Library
+How to use this Library
 
+
+NicoCrawl.new(Pit.get("nicovideo")["id"],Pit.get("nicovideo")["pass"]).login.search(word).download
+
+
+soon I repair this Library
