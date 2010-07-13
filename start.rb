@@ -4,6 +4,7 @@ require 'mechanize'
 require 'pp'
 require 'thread'
 require 'pit'
+require 'kconv'
 class NicoCrawl
   def initialize(id,pass)
     @@agent ||= Mechanize.new
@@ -24,15 +25,22 @@ class NicoCrawl
     self
   end
 
+  def option(option_word = "")
+    @option_word = option_word
+    self
+  end
 
 
   def search(word)
     @links = []
     puts "search"
-    page = @agent.get("http://www.nicovideo.jp/tag/" + word)
-    link_data = page/"p.font12/a.watch"
+    page = @agent.get("http://www.nicovideo.jp/search/" + word + @option_word)
+   
+    link_data = page/"p.font14"
+    #pp link_data[0].children.children[0]["href"] 
     link_data.each{|link|
-      @links << {"title" => link.inner_text.to_s , "watch_url" => "http://nicovideo.jp/" + link["href"],"sm_url" => link["href"].to_s.sub("watch/","")}
+      
+      @links << {"title" => link.inner_text.to_s , "watch_url" => "http://nicovideo.jp/" + link.children.children[0]["href"].to_s,"sm_url" => link.children.children[0]["href"].to_s.sub("watch/","")}
     }
     self
   end
@@ -115,10 +123,12 @@ t = []
 print "How many word do you find? = "
 
 num = gets.chomp.to_i
+print " option word ? = "
+option_word = gets.chomp
 num.times do |i|
   print "No.#{i} serch word = "
-  word = gets.chomp
-  t << Thread.new{NicoCrawl.new(Pit.get("nicovideo")["id"],Pit.get("nicovideo")["pass"]).login.search(word).download}
+  word = gets.chomp.toutf8
+  t << Thread.new{NicoCrawl.new(Pit.get("nicovideo")["id"],Pit.get("nicovideo")["pass"]).login.option(option_word).search(word).download}
   sleep 3
 end
 
